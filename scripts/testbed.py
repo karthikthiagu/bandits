@@ -7,25 +7,41 @@ from matplotlib import pyplot as plt
 from bandits import Bandit
 from behavior import BanditBehavior
 
-def runSimulation(testbed, epsilon, color, steps = 1000):
+
+def configure():
+
+    # Set the plot
+    paperwidth = 11.7
+    paperheight = 8.3
+    margin = 1.0
+    plt.figure(figsize = (paperwidth - 2 * margin, paperheight - 2*margin))
+    plt.margins(0.1, 0.0)
+    plt.xticks([1] + list(np.arange(0, 1001, 250))[1:])
+    plt.yticks(np.arange(0, 2, 0.5))
+    plt.ylim((0, 1.6))
+    
+    simulations = [ (0.0, 'green',  550, 0.9, r'$\epsilon = 0 (greedy)$'),\
+                    (0.01, 'red', 800, 1.18, r'$\epsilon = 0.01$'),\
+                    (0.1, 'black', 200, 1.4, r'$\epsilon = 0.1$') ]
+    return simulations
+
+def runSimulation(simulation, testbed, steps = 1000):
     
     def plotAverageReward():
-      
-        #fig = plt.figure()
-        #ax = fig.add_subplot(111)
-        #ax.margins(x = 0.1, y = 0)
-        plt.margins(0.1, 0.0)
-        plt.xticks([1] + list(np.arange(0, 1001, 250))[1:])
-        plt.yticks(np.arange(0, 2, 0.5))
-        plt.plot(range(steps + 1)[1:], average_reward, color = color)
-        plt.plot([1, 1000], [optimal_reward, optimal_reward], color = 'blue')
-        plt.xlabel('Steps')
-        plt.ylabel('Average Reward')
 
+        # Plotting
+        plt.plot(range(steps + 1)[1:], average_reward, color = color)
+        # Labeling
+        plt.xlabel('Steps')
+        plt.ylabel('Average\n Reward', rotation = 'horizontal', labelpad = 30)
+        plt.text(x_text, y_text, text)
+        # Save
+        plt.savefig('plots/average_reward.png')
+
+    epsilon, color, x_text, y_text, text = simulation
     testbed, optimal_reward = testbed['testbed'], testbed['optimal_reward']
-    epsilon = epsilon
     average_reward = [0]
-    for step in range(steps - 1):
+    for step in range(steps + 1)[1 : -1]:
         if step % 100 == 0:
             print '%s percent complete' % str(float(step) / float(steps) * 100)[:5]
         rewards = np.zeros((len(testbed),))
@@ -36,6 +52,7 @@ def runSimulation(testbed, epsilon, color, steps = 1000):
 
 def generateTestbed(N, K):
 
+    np.random.seed(1)
     testbed = list()
     optimal_reward = np.zeros((N, ))
     for i in range(N):
@@ -54,10 +71,9 @@ def flush(testbed):
 
 if __name__ == '__main__':
 
+    simulations = configure()
     testbed = generateTestbed(2000, 10)
-    for epsilon, color in [(0.0, 'green'), (0.01, 'red'), (0.1, 'black') ]:
-        runSimulation(testbed, epsilon, color, steps = 1000)
+    for simulation in simulations:
+        runSimulation(simulation, testbed, steps = 1000)
         flush(testbed['testbed'])
 
-    plt.savefig('average-reward-steps.png')
-    

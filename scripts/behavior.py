@@ -23,9 +23,8 @@ class BanditBehavior:
     def behaveEpsilonGreedy(self, epsilon):
 
         greedy_arm = np.argmax(self.arms_value)
-        random = np.random.uniform(0, 1, 25)
-        random = np.random.choice(random)
-        if random < 1 - epsilon:
+        decide_arm = np.random.uniform()
+        if decide_arm < 1 - epsilon:
             arm = greedy_arm
         else:
             arm = np.random.choice(range(self.K))
