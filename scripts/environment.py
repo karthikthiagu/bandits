@@ -2,7 +2,7 @@
 
 import numpy as np
 
-class Bandit:
+class Environment:
 
     def __init__(self, K = 10):
         self.K = K
@@ -14,8 +14,4 @@ class Bandit:
         return np.random.normal(loc = self.expected_rewards[arm], scale = 1.0)
 
 if __name__ == '__main__':
-
-    bandit = Bandit(10)
-    reward = bandit.pull(3)
-    print reward
-
+    pass
