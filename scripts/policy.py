@@ -5,12 +5,13 @@ import numpy as np
 
 class Policy:
     
-    def __init__(self, arms_value, arms_pulls, param):
+    def __init__(self, arms_value, arms_pulls, time, param):
         self.arms_value = arms_value
         self.arms_pulls = arms_pulls
+        self.time = time
         self.K = self.arms_value.shape[0]
         self.param = param
-        self.select = {'epsilonGreedy' : self.epsilonGreedy, 'Softmax' : self.softmax, 'ucb' : self.ucb}
+        self.select = {'epsilonGreedy' : self.epsilonGreedy, 'softmax' : self.softmax, 'ucb' : self.ucb}
         
     def epsilonGreedy(self):
 
@@ -54,7 +55,7 @@ class Policy:
                 if self.arms_value[arm] == 0:
                     return arm
         else:
-            estimates = self.arms_value + np.sqrt(2 * np.log(t) * np.power(self.arms_pulls, -1))
+            estimates = self.arms_value + self.param * np.sqrt(np.log(self.time) * np.power(self.arms_pulls, -1))
             arm = np.argmax(estimates)
             return arm
 
